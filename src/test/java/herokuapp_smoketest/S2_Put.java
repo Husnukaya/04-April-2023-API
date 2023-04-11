@@ -7,9 +7,11 @@ import io.restassured.response.ValidatableResponse;
 import org.junit.Test;
 import pojos.BookingDatesPojo;
 import pojos.BookingPojo;
+import utils.ObjectMapperUtils;
 
 import static herokuapp_smoketest.S1_Post.bookingId;
 import static io.restassured.RestAssured.given;
+import static utils.AuthenticationHerOkuApp.generateToken;
 
 
 public class S2_Put extends HerOkuAppBaseUrl {
@@ -60,8 +62,15 @@ public class S2_Put extends HerOkuAppBaseUrl {
   System.out.println("expectedData = " + expectedData);
 
   //Send the request and get the response
-  Response response= given(spec).headers("Cookie","27ea354a4fe6229").body(expectedData).put("{first}/{second}");
- response.prettyPrint();
+  Response response= given(spec).
+          headers("Cookie","token= "+generateToken()).
+          body(expectedData).put("{first}/{second}");
+          response.prettyPrint();
+
+  //Do assertion
+
+  BookingPojo actualData= ObjectMapperUtils.convertJsonToJavaObject(response.asString(),BookingPojo.class);
+  System.out.println("actualData = " + actualData);
 
 
  }
